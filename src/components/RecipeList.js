@@ -9,7 +9,8 @@ export default class RecipeList extends Component {
       handleDetails,
       value,
       handleSubmit,
-      handleChange
+      handleChange,
+      error
     } = this.props;
     return (
       <React.Fragment>
@@ -25,15 +26,19 @@ export default class RecipeList extends Component {
             </div>
           </div>
           <div className="row">
-            {recipes.map(recipe => {
-              return (
-                <Recipe
-                  key={recipe.recipe_id}
-                  recipe={recipe}
-                  handleDetails={() => handleDetails(0, recipe.recipe_id)}
-                />
-              );
-            })}
+            {error ? (
+              <h1 className="text-danger text-center">{error}</h1>
+            ) : (
+              recipes.map(recipe => {
+                return (
+                  <Recipe
+                    key={recipe.recipe_id}
+                    recipe={recipe}
+                    handleDetails={() => handleDetails(0, recipe.recipe_id)}
+                  />
+                );
+              })
+            )}
           </div>
         </div>
       </React.Fragment>
