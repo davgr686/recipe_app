@@ -9,7 +9,8 @@ export default class App extends Component {
     recipes: recipes,
     url:
       "https://www.food2fork.com/api/search?key=2e92023c382d7268b373e45817a73e2c",
-    details_id: 35382
+    details_id: 35382,
+    pageIndex: 1
   };
 
   // async getRecipes() {
@@ -27,13 +28,44 @@ export default class App extends Component {
   // componentDidMount() {
   //   this.getRecipes();
   // }
+
+  displayPage = index => {
+    switch (index) {
+      default:
+      case 1:
+        return (
+          <RecipeList
+            recipes={this.state.recipes}
+            handleDetails={this.handleDetails}
+          />
+        );
+      case 0:
+        return (
+          <RecipeDetails
+            id={this.state.details_id}
+            handleIndex={this.handleIndex}
+          />
+        );
+    }
+  };
+
+  handleDetails = (index, id) => {
+    this.setState({
+      pageIndex: index,
+      details_id: id
+    });
+  };
+
+  handleIndex = index => {
+    this.setState({
+      pageIndex: index
+    });
+  };
+
   render() {
-    console.log(this.state.recipes);
+    //console.log(this.state.recipes);
     return (
-      <React.Fragment>
-        {/* <RecipeList recipes={this.state.recipes} /> */}
-        <RecipeDetails id={this.state.details_id} />
-      </React.Fragment>
+      <React.Fragment>{this.displayPage(this.state.pageIndex)}</React.Fragment>
     );
   }
 }
