@@ -7,28 +7,38 @@ import RecipeDetails from "./components/RecipeDetails";
 export default class App extends Component {
   state = {
     recipes: recipes,
+    base_url:
+      "https://www.food2fork.com/api/search?key=2e92023c382d7268b373e45817a73e2c",
     url:
       "https://www.food2fork.com/api/search?key=2e92023c382d7268b373e45817a73e2c",
     details_id: 35382,
     pageIndex: 1,
-    search: ""
+    search: "",
+    query: "&q=",
+    error: ""
   };
 
-  // async getRecipes() {
-  //   try {
-  //     const data = await fetch(this.state.url);
-  //     const jsonData = await data.json();
-  //     this.setState({
-  //       recipes: jsonData.recipes
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+  async getRecipes() {
+    try {
+      const data = await fetch(this.state.url);
+      const jsonData = await data.json();
+      if (jsonData.recipes.length === 0) {
+        this.setState(() => {
+          return { error: "sorry, your search did not return any results" };
+        });
+      } else {
+        this.setState({
+          recipes: jsonData.recipes
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-  // componentDidMount() {
-  //   this.getRecipes();
-  // }
+  componentDidMount() {
+    this.getRecipes();
+  }
 
   displayPage = index => {
     switch (index) {
@@ -41,6 +51,7 @@ export default class App extends Component {
             value={this.state.search}
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}
+            error={this.state.error}
           />
         );
       case 0:
@@ -61,12 +72,22 @@ export default class App extends Component {
   };
 
   handleChange = e => {
-    console.log("change");
+    this.setState({
+      search: e.target.value
+    });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    console.log("submit");
+    const { base_url, query, search } = this.state;
+    this.setState(
+      () => {
+        return { url: `${base_url}${query}${search}`, search: "" };
+      },
+      () => {
+        this.getRecipes();
+      }
+    );
   };
 
   handleIndex = index => {
